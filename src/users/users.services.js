@@ -1,5 +1,6 @@
 const usersControllers = require('./users.controllers')
 const responses = require('../utils/responses.handler')
+const { hashPassword } = require('../utils/crypto')
 
 const getAllUsers = (req, res) => {
     usersControllers.findAllUser()
@@ -81,8 +82,16 @@ const postNewUser = (req, res) => {
 
 const patchUser = (req, res) => {
     const id = req.params.id 
-    const userObj = req.body 
+    const {firstName, lastName, email, password, profileImage, phone} = req.body 
 
+    const userObj = {
+        firstName,
+        lastName,
+        email,
+        password: hashPassword(password),
+        profileImage,
+        phone
+    }
     usersControllers.updateUser(id, userObj)
         .then(data => {
             if(data){

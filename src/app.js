@@ -2,6 +2,7 @@
 const express = require('express')
 
 //? File imports
+const passportJwt = require('./middleware/verb.middleware')
 const config = require('../config')
 const { error, success } =require('./utils/responses.handler')
 const db = require('./utils/database')
@@ -31,6 +32,14 @@ app.get('/', (req, res) => {
             users: `${config.api.host}/api/v1/users`,
             auth: `${config.api.host}/api/v1/auth`
         }
+    })
+})
+
+app.get('/protected', passportJwt.authenticate('jwt', {session: false}),
+    (req, res) => {
+    res.status(200).json({
+        message: `Hola ${req.user.email} este mensaje solo lo puedes ver si tienes sesion iniciada`,
+        tokenDecoded: req.user
     })
 })
 
